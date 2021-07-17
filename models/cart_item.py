@@ -2,7 +2,7 @@
 from odoo import fields, models
 
 
-class Cart_item(models.Model):
+class CartItem(models.Model):
     _name = 'supermarket.cart_item'
     _description = 'Cart Item'
 
