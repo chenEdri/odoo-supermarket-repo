@@ -7,12 +7,12 @@ class Product(models.Model):
     _description = 'Product'
 
     name = fields.Char('Name')
-    product_category = fields.Id(String='Product')
+    category = fields.Many2one(comodel_name ='Category', ondelete='cascade') # there are many product for each category and not vice versa.
     unit_price = fields.Integer(String='Unit Price')
 
     #if I can add colums to the field I will add :
-    # is_available = fields.Bool(Stirng="availability")
-    # total_amount = field.Integer(String="")
+    # total_amount = field.Integer(String='Total amount')
+    # currency = field.Char('Currency')
     
 
   

@@ -1,14 +1,30 @@
 # -*- coding: utf-8 -*-
-from odoo import fields, models
+from datetime import date
+from xmlrpc.client import DateTime, datetime 
+from odoo import fields, models, api
 
 
 class Cart(models.Model):
     _name = 'supermarket.cart'
     _description = 'Cart'
 
-    custumer = fields.Char('Name')
-    date_of_creation = fields.Datetime(String='Date of creation')
-    
-    
+    # there is only one cart for each customer but a single customer can have more than one cart.
+    customer = fields.One2many(comodel_name='Customer', inverse_name='Name')
+    # not neccesary- it is a default one
+    date_of_creation = fields.Datetime('YYYY-MM-DD HH:MM:SS')
+    checkout_date = fields.Date('YYYY-MM-DD')
+    total_purchase_this_week = fields.Integer(
+        compute='_compute_total_purchase')
+    is_twice_aweek = fields.Boolean(compute='_compute_twice_aweek')
 
-  
+    @api.depends('customer', 'record.customer')
+    def _compute_total_purchase(self):
+        return self.product.unit_price * self.quantity
+
+    @api.depends('customer', 'checkout_date')
+    def _compute_twice_aweek(self):
+        last_check = self.checkout_date
+        # start_delta = datetime.timedelta(days=last_check[-2:], weeks=1)
+        for record in self:
+            if record.checkout_date - last_check > 7 : return False
+        return True  
